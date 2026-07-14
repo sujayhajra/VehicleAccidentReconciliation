@@ -68,8 +68,13 @@ def sync_agent(client: anthropic.Anthropic, path: Path, ids: dict, dry_run: bool
     if agent_id:
         print(f"[update] {key} -> {agent_id}")
         if not dry_run:
-            agent = client.beta.agents.update(agent_id, betas=BETAS, **config)
-            print(f"         now version {agent.version}")
+            # update() requires the current version for optimistic concurrency;
+            # retrieve it first, then the update bumps to a new version.
+            current = client.beta.agents.retrieve(agent_id, betas=BETAS)
+            agent = client.beta.agents.update(
+                agent_id, version=current.version, betas=BETAS, **config
+            )
+            print(f"         v{current.version} -> v{agent.version}")
     else:
         print(f"[create] {key}")
         if not dry_run:
