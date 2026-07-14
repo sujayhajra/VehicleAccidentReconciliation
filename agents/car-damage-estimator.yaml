@@ -47,3 +47,4 @@ tools:
 # TODO: confirm and add if present in Console (not visible in the summary shared):
 # mcp_servers: []
 # skills: []
+# Synced to Claude Managed Agents via .github/workflows/sync-agents.yml
